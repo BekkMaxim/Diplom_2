@@ -1,0 +1,17 @@
+package ru.praktikum.yandex;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Ingredients {
+
+    private List<Ingredient> data;
+    private String success;
+
+}
