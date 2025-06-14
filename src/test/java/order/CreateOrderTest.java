@@ -1,11 +1,13 @@
-package Order;
+package order;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-import ru.praktikum.yandex.*;
+import ru.praktikum.yandex.model.Ingredient;
+import ru.praktikum.yandex.model.Ingredients;
+
 import static org.apache.http.HttpStatus.*;
 
 import java.util.List;
@@ -65,7 +67,7 @@ public class CreateOrderTest extends BaseTestOrder {
     @Description("Создание заказа без ингредиентов и без авторизации")
     public void createEmptyOrderWithoutAuthorization() {
         Response response = orderClient.createOrderWithoutAuthorization(order);
-        orderClient.createOrderWithoutIngredients(response);
+        orderClient.verifyResponseForOrderWithoutIngredients(response);
     }
 
     @Test
@@ -73,7 +75,7 @@ public class CreateOrderTest extends BaseTestOrder {
     @Description("Создание заказа с авторизацией, без ингредиентов")
     public void createEmptyOrderWithAuthorization() {
         Response response = orderClient.createOrderWithAuthorization(order, accessToken);
-        orderClient.createOrderWithoutIngredients(response);
+        orderClient.verifyResponseForOrderWithoutIngredients(response);
     }
 
     @Test

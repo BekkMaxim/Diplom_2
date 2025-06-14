@@ -1,26 +1,30 @@
-package Order;
+package order;
 
+import com.github.javafaker.Faker;
 import io.qameta.allure.Step;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.After;
 import org.junit.Before;
-import ru.praktikum.yandex.Order;
-import ru.praktikum.yandex.OrderClient;
-import ru.praktikum.yandex.User;
-import ru.praktikum.yandex.UserClient;
+import ru.praktikum.yandex.api.UserClientResponse;
+import ru.praktikum.yandex.model.Order;
+import ru.praktikum.yandex.api.OrderClient;
+import ru.praktikum.yandex.model.User;
+import ru.praktikum.yandex.api.UserClientRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.hamcrest.CoreMatchers.equalTo;
 
 public abstract class BaseTestOrder {
 
+    protected Faker faker;
     protected String name;
     protected String email;
     protected String password;
-    protected UserClient userClient;
+    protected UserClientRequest userClientRequest;
+    protected UserClientResponse userClientResponse;
     protected User user;
     protected String accessToken;
     protected OrderClient orderClient;
@@ -29,22 +33,25 @@ public abstract class BaseTestOrder {
 
     @Before
     public void setUp() {
-        name = RandomStringUtils.randomAlphanumeric(5, 20);
-        password = RandomStringUtils.randomAlphanumeric(8, 20);
-        email = RandomStringUtils.randomAlphanumeric(4, 28).toLowerCase() + "@yandex.ru";
+        faker = new Faker(new Locale("ru"));
 
-        userClient = new UserClient();
+        name = faker.name().fullName();
+        password = faker.internet().password(8, 20, true, true);
+        email = faker.internet().emailAddress();
+
+        userClientRequest = new UserClientRequest();
+        userClientResponse = new UserClientResponse();
         orderClient = new OrderClient();
         user = new User(name, email, password);
 
         //Регистрация пользователя
-        userClient.createNewUser(user)
+        userClientRequest.createNewUser(user)
             .then()
             .log().ifValidationFails()
             .statusCode(SC_OK);
 
         //Вход пользователя + получение токена авторизации
-        accessToken = userClient.checkLoginExistingUser(user)
+        accessToken = userClientRequest.checkLoginExistingUser(user)
                 .then()
                 .log().ifValidationFails()
                 .assertThat()
@@ -65,7 +72,7 @@ public abstract class BaseTestOrder {
     @Step("Очистка после теста - удаление пользователя")
     public void tearDown() {
         if (accessToken != null) {
-            userClient.deleteUser(accessToken);
+            userClientRequest.deleteUser(accessToken);
         }
     }
 }

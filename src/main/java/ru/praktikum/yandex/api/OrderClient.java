@@ -1,9 +1,13 @@
-package ru.praktikum.yandex;
+package ru.praktikum.yandex.api;
 
 import io.qameta.allure.Step;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.response.Response;
 import org.hamcrest.Matchers;
+import ru.praktikum.yandex.api.common.BaseApi;
+import ru.praktikum.yandex.model.Ingredients;
+import ru.praktikum.yandex.model.Order;
+
 import static org.apache.http.HttpStatus.*;
 
 
@@ -38,7 +42,7 @@ public class OrderClient extends BaseApi {
     }
 
     @Step("Создание заказа без ингредиентов")
-    public void createOrderWithoutIngredients(Response response) {
+    public void verifyResponseForOrderWithoutIngredients(Response response) {
         response.then()
                 .assertThat()
                 .statusCode(SC_BAD_REQUEST)

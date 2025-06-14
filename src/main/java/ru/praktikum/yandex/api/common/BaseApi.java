@@ -1,4 +1,4 @@
-package ru.praktikum.yandex;
+package ru.praktikum.yandex.api.common;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;

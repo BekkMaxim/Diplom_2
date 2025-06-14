@@ -1,22 +1,27 @@
-package User;
+package user;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
-import ru.praktikum.yandex.User;
 
 import static org.apache.http.HttpStatus.*;
 
 public class LoginUserTest extends BaseTestUser{
 
+    @Before
+    public void setUp() {
+        super.setUp();
+        userClientRequest.createNewUser(registeredUser);
+    }
+
     @Test
     @DisplayName("Check Authorization")
     @Description("Авторизация существующего пользователя")
     public void checkAuthorization() {
-        userClient.createNewUser(user);
-        userClient.checkLoginExistingUser(new User(email, password))
+        userClientRequest.checkLoginExistingUser(loginCredentials)
                 .then()
                 .assertThat()
                 .statusCode(SC_OK)
@@ -31,53 +36,45 @@ public class LoginUserTest extends BaseTestUser{
     @DisplayName("Check login with wrong password")
     @Description("Проверка логина с неверным паролем")
     public void checkLoginWithWrongPassword() {
-        userClient.createNewUser(user);
-        user.setPassword("wrongPassword");
-        Response response = userClient.checkLoginExistingUser(user);
-        userClient.checkFailAuthLogin(response);
+        loginCredentials.setPassword("wrongPassword");
+        Response response = userClientRequest.checkLoginExistingUser(loginCredentials);
+        userClientResponse.checkFailAuthLogin(response);
     }
 
     @Test
     @DisplayName("Check Login With Wrong Email")
     @Description("Проверка логина с неверным email")
     public void checkLoginWithWrongEmail() {
-        userClient.createNewUser(user);
-        user.setEmail("wrongEmail@gmail.com");
-        Response response = userClient.checkLoginExistingUser(user);
-        userClient.checkFailAuthLogin(response);
+        loginCredentials.setEmail("wrongEmail@gmail.com");
+        Response response = userClientRequest.checkLoginExistingUser(loginCredentials);
+        userClientResponse.checkFailAuthLogin(response);
     }
 
     @Test
     @DisplayName("Check Login Without Email")
     @Description("Проверка логина без email")
     public void checkLoginWithoutEmail() {
-        userClient.createNewUser(user);
-        user.setEmail(null);
-        user.setName(null);
-        Response response = userClient.checkLoginExistingUser(user);
-        userClient.checkFailAuthLogin(response);
+        loginCredentials.setEmail(null);
+        Response response = userClientRequest.checkLoginExistingUser(loginCredentials);
+        userClientResponse.checkFailAuthLogin(response);
     }
 
     @Test
     @DisplayName("Check Login Without Password")
     @Description("Проверка логина без пароля")
     public void checkLoginWithoutPassword() {
-        userClient.createNewUser(user);
-        user.setPassword(null);
-        user.setName(null);
-        Response response = userClient.checkLoginExistingUser(user);
-        userClient.checkFailAuthLogin(response);
+        loginCredentials.setPassword(null);
+        Response response = userClientRequest.checkLoginExistingUser(loginCredentials);
+        userClientResponse.checkFailAuthLogin(response);
     }
 
     @Test
     @DisplayName("Check Login Without Email and Password")
     @Description("Проверка логина без email и пароля")
     public void checkLoginWithoutEmailAndPassword() {
-        userClient.createNewUser(user);
-        user.setEmail(null);
-        user.setPassword(null);
-        user.setName(null);
-        Response response = userClient.checkLoginExistingUser(user);
-        userClient.checkFailAuthLogin(response);
+        loginCredentials.setEmail(null);
+        loginCredentials.setPassword(null);
+        Response response = userClientRequest.checkLoginExistingUser(loginCredentials);
+        userClientResponse.checkFailAuthLogin(response);
     }
 }
