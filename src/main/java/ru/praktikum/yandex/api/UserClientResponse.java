@@ -7,7 +7,7 @@ import ru.praktikum.yandex.api.common.BaseApi;
 
 import static org.apache.http.HttpStatus.*;
 
-public class UserClientResponse extends BaseApi {
+public class UserClientResponse {
 
     @Step("Ошибка при регистрации пользователя")
     public void failedResponseAuthRegistration(Response response) {
